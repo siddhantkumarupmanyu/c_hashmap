@@ -39,6 +39,13 @@ void addElement(LinkedList* list, void* element) {
     adjustListHeadAndLastPointers(list, node);
 }
 
+static void adjustListHeadAndLastPointers(LinkedList* list, Node* node) {
+    if ((!(list->head)) || (!node)) {
+        list->head = node;
+    }
+    list->last = node;
+}
+
 void* getElement(LinkedList* list, int index) {
     Node* currentNode = list->head;
     int i = 0;
@@ -67,6 +74,13 @@ void freeLinkedList(LinkedList* list) {
     list->count = 0;
     free(list);
     list = NULL;
+}
+
+static void freeNode(Node* node) {
+    free(node->data);
+    node->next = NULL;
+    free(node);
+    node = NULL;
 }
 
 void* removeElement(LinkedList* list, int index) {
@@ -110,20 +124,6 @@ void* removeElement(LinkedList* list, int index) {
         currentNode = currentNode->next;
     }
     return NULL;
-}
-
-static void freeNode(Node* node) {
-    free(node->data);
-    node->next = NULL;
-    free(node);
-    node = NULL;
-}
-
-static void adjustListHeadAndLastPointers(LinkedList* list, Node* node) {
-    if ((!(list->head)) || (!node)) {
-        list->head = node;
-    }
-    list->last = node;
 }
 
 // #define LINKEDLIST_TEST
