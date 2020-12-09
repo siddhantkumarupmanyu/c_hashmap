@@ -90,28 +90,15 @@ void* removeElement(LinkedList* list, int index) {
     while (currentNode) {
         if (i == index) {
             if (i == 0) {
-                void* data = currentNode->data;
                 list->head = currentNode->next;
-
-                currentNode->next = NULL;
-                free(currentNode);
-
-                list->count--;
-                return data;
-            }
-            if (i == (list->count - 1)) {
-                void* data = currentNode->data;
+            } else if (i == (list->count - 1)) {
                 list->last = prev;
                 prev->next = NULL;
-
-                currentNode->next = NULL;
-                free(currentNode);
-
-                list->count--;
-                return data;
+            } else {
+                prev->next = currentNode->next;
             }
+
             void* data = currentNode->data;
-            prev->next = currentNode->next;
 
             currentNode->next = NULL;
             free(currentNode);
