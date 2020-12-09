@@ -19,4 +19,6 @@ void freeLinkedList(LinkedList* list);
 
 void* removeElement(LinkedList* list, int index);
 
+void addElementAt(LinkedList* list, void* element, int index);
+
 #endif

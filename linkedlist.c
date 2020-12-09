@@ -113,6 +113,37 @@ void* removeElement(LinkedList* list, int index) {
     return NULL;
 }
 
+void addElementAt(LinkedList* list, void* element, int index) {
+    Node* currentNode = list->head;
+    Node* prev;
+    int i = 0;
+
+    if (index == list->count) {
+        addElement(list, element);
+        return;
+    }
+
+    while (currentNode) {
+        if (i == index) {
+            Node* node = (Node*)malloc(sizeof(Node));
+            node->data = element;
+
+            if (i == 0) {  // head case
+                list->head = node;
+            } else {
+                prev->next = node;
+            }
+            node->next = currentNode;
+
+            list->count++;
+            return;
+        }
+        prev = currentNode;
+        i++;
+        currentNode = currentNode->next;
+    }
+}
+
 // #define LINKEDLIST_TEST
 
 #ifdef LINKEDLIST_TEST
@@ -258,6 +289,65 @@ void testRemoveElement_Last() {
     assert(list->last->data == a);
 }
 
+void testInsertElementAt() {
+    LinkedList* list = createLinkedList();
+    int* a = (int*)malloc(sizeof(int));
+    *a = 42;
+    int* b = (int*)malloc(sizeof(int));
+    *b = 56;
+    addElement(list, (void*)a);
+    addElement(list, (void*)b);
+
+    assert(list->count == 2);
+
+    int c = 46;
+
+    addElementAt(list, &c, 1);
+
+    assert(getElement(list, 1) == (void*)&c);
+    assert(*((int*)getElement(list, 1)) == c);
+
+    assert(list->count == 3);
+}
+
+void testInsertElementAt_Head() {
+    LinkedList* list = createLinkedList();
+    int a = 42;
+    int b = 56;
+    addElement(list, &a);
+    addElement(list, &b);
+
+    assert(list->count == 2);
+
+    int c = 46;
+
+    addElementAt(list, &c, 0);
+
+    assert(getElement(list, 0) == &c);
+    assert(*((int*)getElement(list, 0)) == c);
+
+    assert(list->count == 3);
+}
+
+void testInsertElementAt_Last() {
+    LinkedList* list = createLinkedList();
+    int a = 42;
+    int b = 56;
+    addElement(list, &a);
+    addElement(list, &b);
+
+    assert(list->count == 2);
+
+    int c = 46;
+
+    addElementAt(list, &c, 2);
+
+    assert(getElement(list, 2) == (void*)&c);
+    assert(*((int*)getElement(list, 2)) == c);
+
+    assert(list->count == 3);
+}
+
 int main() {
     testCreate();
     testAdd();
@@ -267,6 +357,9 @@ int main() {
     testRemoveElement();
     testRemoveElement_First();
     testRemoveElement_Last();
+    testInsertElementAt();
+    testInsertElementAt_Head();
+    testInsertElementAt_Last();
 
     return 0;
 }
