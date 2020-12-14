@@ -99,7 +99,7 @@ static int getLimitedHash(void* key) {
     return hash;
 }
 
-#define HASHMAP_TEST
+// #define HASHMAP_TEST
 
 #ifdef HASHMAP_TEST
 
