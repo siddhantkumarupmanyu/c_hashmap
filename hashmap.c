@@ -179,6 +179,8 @@ void testRemove() {
     assert(getrem == NULL);
 }
 
+// todo add freeHashmap() function
+
 int main() {
     testCreate();
     testAdd();
