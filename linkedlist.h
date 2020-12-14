@@ -1,9 +1,16 @@
 #ifndef LINKED_LIST_H
 #define LINKED_LIST_H
 
-struct LinkedList;
+struct LinkedList {
+    int count;
+    struct Node* head;
+    struct Node* last;
+};
 
-struct Node;
+struct Node {
+    void* data;
+    struct Node* next;
+};
 
 typedef struct LinkedList LinkedList;
 

@@ -6,11 +6,11 @@
 			"label": "C/C++: gcc build active file",
 			"command": "/usr/bin/gcc",
 			"args": [
-				"-DLINKEDLIST_TEST",
 				"-g",
-				"${file}",
+				"${fileDirname}/linkedlist.c",
+				"${fileDirname}/hashmap.c",
 				"-o",
-				"${fileDirname}/${fileBasenameNoExtension}"
+				"${fileDirname}/a.out"
 			],
 			"options": {
 				"cwd": "/usr/bin"

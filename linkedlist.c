@@ -2,17 +2,6 @@
 
 #include <stdlib.h>
 
-struct LinkedList {
-    int count;
-    Node* head;
-    Node* last;
-};
-
-struct Node {
-    void* data;
-    Node* next;
-};
-
 static void adjustListHeadAndLastPointers(LinkedList* list, Node* node);
 static void freeNode(Node* node);
 
@@ -84,7 +73,7 @@ static void freeNode(Node* node) {
 }
 
 void* removeElement(LinkedList* list, int index) {
-    Node* currentNode = list->head;
+    Node* currentNode = list->head; // can refactor this while loop from functions including this
     Node* prev;
     int i = 0;
     while (currentNode) {
