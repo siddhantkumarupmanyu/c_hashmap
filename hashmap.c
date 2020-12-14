@@ -69,6 +69,28 @@ void* getValue(Hashmap* hashmap, void* key) {
             return entry->value;
         }
     }
+    return NULL;
+}
+
+void* removeValue(Hashmap* hashmap, void* key) {
+    int hash = getLimitedHash(key);
+
+    void* arrayBucket = hashmap->array[hash];
+
+    LinkedList* list = (LinkedList*)arrayBucket;
+
+    for (int i = 0; i < list->count; i++) {
+        void* element = getElement(list, i);
+        Entry* entry = (Entry*)element;
+
+        if (equalsFun(key, entry->key)) {
+            void* value = entry->value;
+            removeElement(list, i);
+            return value;
+        }
+    }
+
+    return NULL;
 }
 
 static int getLimitedHash(void* key) {
@@ -139,10 +161,29 @@ void testRetrieve() {
     assert(*((int*)retrivedValue) == value);
 }
 
+void testRemove() {
+    Hashmap* hashmap = createHashmap(testHashFun, testEqualFun);
+    int key = 45;
+    int value = 56;
+
+    addValue(hashmap, &key, &value);
+
+    void* removedValue = removeValue(hashmap, &key);
+    assert(removedValue == &value);
+    assert(*((int*)removedValue) == value);
+
+    void* getval = getValue(hashmap, &key);
+    assert(getval == NULL);
+
+    void* getrem = removeValue(hashmap, &key);
+    assert(getrem == NULL);
+}
+
 int main() {
     testCreate();
     testAdd();
     testRetrieve();
+    testRemove();
 
     return 0;
 }
