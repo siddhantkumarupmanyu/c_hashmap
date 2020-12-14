@@ -19,6 +19,7 @@ struct Entry {
 };
 
 static void fillUpArrayWithNull(void* array[]);
+static int getLimitedHash(void* key);
 
 static int (*hashFun)(void*);
 static bool (*equalsFun)(void*, void*);
@@ -38,18 +39,42 @@ static void fillUpArrayWithNull(void* array[]) {
     }
 }
 
-void addEntry(Hashmap* hashmap, void* key, void* value) {
+void addValue(Hashmap* hashmap, void* key, void* value) {
     Entry* entry = (Entry*)malloc(sizeof(entry));
     entry->key = key;
     entry->value = value;
 
-    int hash = hashFun(key);
+    int hash = getLimitedHash(key);
     if (hashmap->array[hash] == NULL) {
         LinkedList* list = createLinkedList();
         hashmap->array[hash] = list;
     }
     LinkedList* list = (LinkedList*)(hashmap->array[hash]);
     addElement(list, entry);
+    hashmap->entries++;
+}
+
+void* getValue(Hashmap* hashmap, void* key) {
+    int hash = getLimitedHash(key);
+
+    void* arrayBucket = hashmap->array[hash];
+
+    LinkedList* list = (LinkedList*)arrayBucket;
+
+    for (int i = 0; i < list->count; i++) {
+        void* element = getElement(list, i);
+        Entry* entry = (Entry*)element;
+
+        if (equalsFun(key, entry->key)) {
+            return entry->value;
+        }
+    }
+}
+
+static int getLimitedHash(void* key) {
+    int hash = hashFun(key);
+    hash = hash % ARRAYSIZE;
+    return hash;
 }
 
 #define HASHMAP_TEST
@@ -82,7 +107,7 @@ void testAdd() {
     int key = 45;
     int value = 56;
 
-    addEntry(hashmap, &key, &value);
+    addValue(hashmap, &key, &value);
 
     void* arrayBucket = hashmap->array[45];
 
@@ -102,9 +127,22 @@ void testAdd() {
     }
 }
 
+void testRetrieve() {
+    Hashmap* hashmap = createHashmap(testHashFun, testEqualFun);
+    int key = 45;
+    int value = 56;
+
+    addValue(hashmap, &key, &value);
+
+    void* retrivedValue = getValue(hashmap, &key);
+    assert(retrivedValue == &value);
+    assert(*((int*)retrivedValue) == value);
+}
+
 int main() {
     testCreate();
     testAdd();
+    testRetrieve();
 
     return 0;
 }
