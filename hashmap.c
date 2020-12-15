@@ -24,7 +24,7 @@ static int getLimitedHash(void* key);
 static int (*hashFun)(void*);
 static bool (*equalsFun)(void*, void*);
 
-Hashmap* createHashmap(int (*hashfun)(void*), bool(equalsfun)(void*, void*)) {
+Hashmap* createHashmap(int (*hashfun)(void*), bool (*equalsfun)(void*, void*)) {
     hashFun = hashfun;
     equalsFun = equalsfun;
     Hashmap* hashmap = (Hashmap*)malloc(sizeof(Hashmap));
@@ -97,6 +97,26 @@ static int getLimitedHash(void* key) {
     int hash = hashFun(key);
     hash = hash % ARRAYSIZE;
     return hash;
+}
+
+void freeHashMap(Hashmap* hashmap, void (*freeKeyAndValue)(void* key, void* value)) {
+    for (int i = 0; i < ARRAYSIZE; i++) {
+        if (hashmap->array[i] != NULL) {
+            LinkedList* list = (LinkedList*)(hashmap->array[i]);
+
+            for (int i = 0; i < list->count; i++) {
+                void* element = getElement(list, i);
+                Entry* entry = (Entry*)element;
+
+                freeKeyAndValue(entry->key, entry->value);
+            }
+
+            freeLinkedList(list);
+            hashmap->array[i] = NULL;
+        }
+    }
+    free(hashmap);
+    hashmap = NULL;
 }
 
 // #define HASHMAP_TEST
@@ -179,13 +199,30 @@ void testRemove() {
     assert(getrem == NULL);
 }
 
-// todo add freeHashmap() function
+void testFreeKeyAndValue(void* key, void* value) {
+    free(key);
+    free(value);
+}
+
+void testFree() {
+    Hashmap* hashmap = createHashmap(testHashFun, testEqualFun);
+    int* key = (int*)malloc(sizeof(int));
+    int* value = (int*)malloc(sizeof(int));
+
+    *key = 45;
+    *value = 56;
+
+    addValue(hashmap, key, value);
+
+    freeHashMap(hashmap, testFreeKeyAndValue);
+}
 
 int main() {
     testCreate();
     testAdd();
     testRetrieve();
     testRemove();
+    testFree();
 
     return 0;
 }
