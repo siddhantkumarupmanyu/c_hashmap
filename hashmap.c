@@ -6,18 +6,6 @@
 
 #include "linkedlist.h"
 
-#define ARRAYSIZE 120
-
-struct Hashmap {
-    void* array[ARRAYSIZE];  // array of pointers
-    int entries;
-};
-
-struct Entry {
-    void* key;
-    void* value;
-};
-
 static void fillUpArrayWithNull(void* array[]);
 static int getLimitedHash(void* key);
 
